@@ -16,6 +16,8 @@ app.get('/', (req, res) => {
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 client.connect(err => {
     const worksCollection = client.db(process.env.DB_NAME).collection("works");
+    const registersCollection = client.db(process.env.DB_NAME).collection("registers");
+
     console.log("Connected")
 
     app.get('/works', (req, res) => {
@@ -24,7 +26,24 @@ client.connect(err => {
                 res.send(documents)
             })
     })
-});
 
+    app.get('/register/:title', (req, res) => {
+        worksCollection.find({ title: req.params.title })
+            .toArray((err, documents) => {
+                res.send(documents[0])
+            })
+    })
+    app.post('/register', (req, res) => {
+        const register = req.body
+        registersCollection.insertOne(register)
+            .then(result => {
+                console.log(result)
+                res.send(result)
+            })
+            .catch(error => {
+                console.log(".....ERROR.....",error)
+            })
+    })
+});
 
 app.listen(5000)
