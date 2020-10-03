@@ -1,6 +1,6 @@
 const express = require('express')
 const cors = require('cors')
-const bodyParser = require('body-parser')
+const bodyParser = require('body-parser');
 const MongoClient = require('mongodb').MongoClient;
 require('dotenv').config()
 
@@ -41,8 +41,21 @@ client.connect(err => {
                 res.send(result)
             })
             .catch(error => {
-                console.log(".....ERROR.....",error)
+                console.log(".....ERROR.....", error)
             })
+    })
+
+    app.get('/events', (req, res) => {
+        registersCollection.find({ email: req.query.email })
+            .toArray((err, documents) => {
+                res.send(documents)
+            })
+    })
+    app.get('/registerList', (req, res)=>{
+        registersCollection.find({})
+        .toArray((err, documents) => {
+            res.send(documents)
+        })
     })
 });
 
